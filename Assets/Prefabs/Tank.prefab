@@ -364,8 +364,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Hp: 100
-  TankExplosion: {fileID: 0}
-  tankExplosionAudio: {fileID: 8300000, guid: 5c27182a28a7eb942a362e6d198fe0e6, type: 3}
+  TankExplosion: {fileID: 151086, guid: ee49a9a8678ecf8468eb488e1ac8d42b, type: 3}
+  TankExplosionAudio: {fileID: 8300000, guid: 5c27182a28a7eb942a362e6d198fe0e6, type: 3}
 --- !u!114 &1845784247
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -382,7 +382,7 @@ MonoBehaviour:
     type: 3}
   FireKey: 32
   ShellSpeed: 15
-  shotAudio: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}
+  ShotAudio: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}
 --- !u!82 &6986879613606116171
 AudioSource:
   m_ObjectHideFlags: 0
