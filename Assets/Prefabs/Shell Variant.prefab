@@ -42,8 +42,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3c4441eed1e8e194a85384c0e646dc77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ShellExplosionPrefab: {fileID: 195792, guid: 89e78efe92dfe5a42837b392cdb0bf9e, type: 3}
-  ShellExplosionAudio: {fileID: 8300000, guid: 3a77defcde1caaa40b6f7502547e0c4e, type: 3}
+  shellExplosionPrefab: {fileID: 195792, guid: 89e78efe92dfe5a42837b392cdb0bf9e, type: 3}
+  shellExplosionAudio: {fileID: 8300000, guid: 3a77defcde1caaa40b6f7502547e0c4e, type: 3}
+  gameManagerTransform: {fileID: 0}
 --- !u!1001 &2998448203942254271
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -276,10 +276,8 @@ GameObject:
   - component: {fileID: 3616684434658469933}
   - component: {fileID: 3616684434658469929}
   - component: {fileID: 3616684434658469931}
-  - component: {fileID: 3616684434658469930}
-  - component: {fileID: 4918074311610767549}
-  - component: {fileID: 1845784247}
   - component: {fileID: 6986879613606116171}
+  - component: {fileID: 560107528554050377}
   m_Layer: 0
   m_Name: Tank
   m_TagString: Tank
@@ -334,55 +332,6 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1.5, y: 1.7, z: 1.6}
   m_Center: {x: 0, y: 0.85, z: 0}
---- !u!114 &3616684434658469930
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3616684434658469932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 11334d41992c46d4e94a247f546a2698, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Speed: 5
-  AngulaSpeed: 15
-  PlayerNum: 1
-  IdleAudio: {fileID: 8300000, guid: 4932ab25b84dd7649b80af68a9660ddc, type: 3}
-  DrivingAudio: {fileID: 8300000, guid: d7ca9fb5aa30155449192b23d7fb3336, type: 3}
---- !u!114 &4918074311610767549
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3616684434658469932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84c13f70f23ebce4f9fbbb0a19f6ca6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Hp: 100
-  TankExplosion: {fileID: 151086, guid: ee49a9a8678ecf8468eb488e1ac8d42b, type: 3}
-  TankExplosionAudio: {fileID: 8300000, guid: 5c27182a28a7eb942a362e6d198fe0e6, type: 3}
---- !u!114 &1845784247
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3616684434658469932}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 73faba3fc8a739b4fbeb7d99063ce7b4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  ShellPrefab: {fileID: 2998448203942285343, guid: 7fe3b367c9ddc564f924fa7e30ad8204,
-    type: 3}
-  FireKey: 32
-  ShellSpeed: 15
-  ShotAudio: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}
 --- !u!82 &6986879613606116171
 AudioSource:
   m_ObjectHideFlags: 0
@@ -479,6 +428,33 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &560107528554050377
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3616684434658469932}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b422624c9e10a90418a2df5ba3bee884, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Speed: 5
+  AngulaSpeed: 15
+  PlayerNum: 1
+  gameManagerTransform: {fileID: 0}
+  idleAudio: {fileID: 8300000, guid: 4932ab25b84dd7649b80af68a9660ddc, type: 3}
+  drivingAudio: {fileID: 8300000, guid: d7ca9fb5aa30155449192b23d7fb3336, type: 3}
+  Hp: 100
+  tankExplosion: {fileID: 151086, guid: ee49a9a8678ecf8468eb488e1ac8d42b, type: 3}
+  tankExplosionAudio: {fileID: 8300000, guid: 5c27182a28a7eb942a362e6d198fe0e6, type: 3}
+  shellPrefab: {fileID: 2998448203942285343, guid: 7fe3b367c9ddc564f924fa7e30ad8204,
+    type: 3}
+  fireKey: 32
+  shellSpeed: 15
+  shotClip: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}
+  audioSourceFire: {fileID: 0}
 --- !u!1 &3616684435008834037
 GameObject:
   m_ObjectHideFlags: 0
