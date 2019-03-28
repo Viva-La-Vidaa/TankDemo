@@ -40,8 +40,8 @@ public class Tank : MonoBehaviour
         firePosition = transform.Find("FirePosition");
         //初始坦克位置
         System.Random random = new System.Random();
-        float x = random.Next(-40,40);
-        float z = random.Next(-40, 40);
+        float x = random.Next(-25,-25);
+        float z = random.Next(-25, 25);
         transform.position = new Vector3(x,0,z);
     }
 
