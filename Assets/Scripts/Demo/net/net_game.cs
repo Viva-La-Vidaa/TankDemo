@@ -183,6 +183,11 @@ namespace GAME{
             return this._gameing; 
         }
  
+ 
+        public CONFIG.Config_Value GetGameinit(){  //获取游戏状态
+            return this._gameinit; 
+        }
+
         public string move(){   //*.
                 var buf = new byte[1024];
                 int n = this._socket.Receive(buf);
@@ -193,64 +198,39 @@ namespace GAME{
     }
 }
 
-
-[ExecuteInEditMode]
 public class net_game : MonoBehaviour
 {
-    public Text talltext;//显示消息框
-    GAME.SocketNetMgr net;
+    static public GAME.SocketNetMgr net;
     void Start()
     {
         //测试连接大厅
         net = new GAME.SocketNetMgr();//创建网络对象
         bool istrue0 = net.Connect();//连接大厅 
         if (istrue0) {
-            talltext.text = "进入大厅";
-
+            Debug.Log("进入大厅");
             //测试
             Game_Text();
         
         } else{
-            talltext.text = "进入大厅失败";
+            Debug.LogError("进入大厅失败");
         }
     }
-
-    int i = 0;
-    bool b = false;
-    void Update(){
-        if(!net.GetGameing()){
-            talltext.text = "等待游戏开始" + i++;//等待画面
-            Debug.Log(talltext.text);
-        }else if(!b){
-            talltext.text = "游戏开始";
-            Debug.Log(talltext.text);
-            net.GameMsgInit();//初始化场景
-            talltext.text = "游戏初始化完成";
-            Debug.Log(talltext.text);
-            Debug.LogError("进入房间失败");
-            b = true;
-        }
-    }
-
+    
     public void Join(){
        
         bool istrue1 = net.JoinRoom(); //加入房间
         if(istrue1){
             Debug.Log(net.GetPlayerId());//获取玩家id
             Debug.Log(net.GetRoomId());//获取房间id
-            talltext.text = "成功加入房间";
+            Debug.Log("成功加入房间");
         }else{
-            talltext.text = "加入失败，或已在房间";
+            Debug.Log("加入失败，或已在房间");
         }
     }
 
     public void Exit(){
         net.ExitRoom();
-        talltext.text = "退出房间";
-    }
-
-    public void test(){
-        talltext.text = "按键测试";
+        Debug.Log("退出房间");
     }
 
     public void MOVE_X(float cmd){//发送运动指令并改变运动状态
@@ -264,7 +244,6 @@ public class net_game : MonoBehaviour
     public void Game_Text(){//发送运动指令并改变运动状态
         Join();//方便加入房间，后续要改动
         if(net.GetRooming()){
-            talltext.text = "等待游戏开始";
             Debug.Log("等待游戏开始");
             Thread thread = new Thread(new ThreadStart(net.WaitGameStartMsg));
             thread.Start();
