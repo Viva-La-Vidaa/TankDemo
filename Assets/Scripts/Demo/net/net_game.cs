@@ -60,6 +60,7 @@ namespace GAME{
             this._roomid = 0;
             this._rooming = false;
             this._gameing = false;
+            this._gameinit.values = new CONFIG.xy_Value[4];
         }
             //连接服务器
         public bool Connect(){//1. 连接
@@ -118,6 +119,7 @@ namespace GAME{
             var buf = new byte[1024];
             int n = this._socket.Receive(buf);
             string data = Encoding.UTF8.GetString(buf,0,n);
+
             this._gameinit = JsonUtility.FromJson<CONFIG.Config_Value>(data);
         }  
 

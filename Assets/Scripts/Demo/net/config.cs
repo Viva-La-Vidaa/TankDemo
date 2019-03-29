@@ -1,8 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 namespace  CONFIG{
+    [Serializable]
     public struct xy_Value{//xy参数
         public float x;
         public float y;
@@ -13,6 +15,7 @@ namespace  CONFIG{
         }
     }
 
+    [Serializable]
      public struct Config_Value{
         public long num; //总人数
         public long[] ids;//所有玩家id

@@ -31,12 +31,13 @@ public class GameManager : MonoBehaviour
             net_game.net.GameMsgInit();//初始化场景
             CONFIG.Config_Value config_value = net_game.net.GetGameinit();
             long num = config_value.num;
+
             for(long i=0; i<num; i++){
                 long id = config_value.ids[i];
                 if(id == net_game.net.GetPlayerId()){
-                     SpawnPlayer(id);
+                    SpawnPlayer(id, config_value.values[i].x, config_value.values[i].y);
                 }else {
-                    SpawnEnemy(id);
+                    SpawnEnemy(id, config_value.values[i].x, config_value.values[i].y);
                     Debug.Log("生成敌人"+id);
                 }
                 config.Add(id);
@@ -47,7 +48,7 @@ public class GameManager : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.P))
         {
-            SpawnEnemy(1);//这里假设服务端发送过来的是2号
+            SpawnEnemy(1, -15, 20);//这里假设服务端发送过来的是2号
         }
     }
 
@@ -55,17 +56,20 @@ public class GameManager : MonoBehaviour
     /// tank生成
     /// </summary>
     /// <param name="TankNo">坦克的编号</param>
-    void SpawnPlayer(long TankNo)//生成玩家
+    void SpawnPlayer(long TankNo, float x, float y)//生成玩家
     {
         GameObject go = Instantiate(playerPrefab) as GameObject;
-        go.transform.name = "Tank" + TankNo;
+        go.transform.name = "Tank" + TankNo;      
+        Vector3 value = new Vector3(x,0,y);
+        go.transform.position = value;
     }
 
-    void SpawnEnemy(long TankNo)//生成敌人
+    void SpawnEnemy(long TankNo, float x, float y)//生成敌人
     {
         GameObject go = Instantiate(enemyPrefab) as GameObject;
         go.transform.name = "Tank" + TankNo;
-
+        Vector3 value = new Vector3(x,0,y);
+        go.transform.position = value;
         //区分本地玩家与其它客户端玩家的特效处理
     }
 
