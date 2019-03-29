@@ -32,8 +32,14 @@ public class GameManager : MonoBehaviour
             CONFIG.Config_Value config_value = net_game.net.GetGameinit();
             long num = config_value.num;
             for(long i=0; i<num; i++){
-                SpawnEnemy(config_value.ids[i]);
-                Debug.Log("生成坦克"+config_value.ids[i]);
+                long id = config_value.ids[i];
+                if(id == net_game.net.GetPlayerId()){
+                     SpawnPlayer(id);
+                }else {
+                    SpawnEnemy(id);
+                    Debug.Log("生成敌人"+id);
+                }
+                config.Add(id);
             }
             Debug.Log("游戏初始化完成");
             b = true;
@@ -41,7 +47,7 @@ public class GameManager : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.P))
         {
-            SpawnPlayer(1);//这里假设服务端发送过来的是2号
+            SpawnEnemy(1);//这里假设服务端发送过来的是2号
         }
     }
 

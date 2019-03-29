@@ -216,7 +216,7 @@ public class net_game : MonoBehaviour
         }
     }
     
-    public void Join(){
+    static public void Join(){
        
         bool istrue1 = net.JoinRoom(); //加入房间
         if(istrue1){
@@ -228,20 +228,20 @@ public class net_game : MonoBehaviour
         }
     }
 
-    public void Exit(){
+    static public void Exit(){
         net.ExitRoom();
         Debug.Log("退出房间");
     }
 
-    public void MOVE_X(float cmd){//发送运动指令并改变运动状态
+    static public void Move_X(float cmd){//发送运动指令并改变运动状态
         net.PlayerMove_X(cmd);
     }
 
-    public void MOVE_Y(float cmd){//发送运动指令并改变运动状态
+    static public void Move_Y(float cmd){//发送运动指令并改变运动状态
         net.PlayerMove_Y(cmd);
     }
     
-    public void Game_Text(){//发送运动指令并改变运动状态
+    static public void Game_Text(){//发送运动指令并改变运动状态
         Join();//方便加入房间，后续要改动
         if(net.GetRooming()){
             Debug.Log("等待游戏开始");

@@ -63,24 +63,41 @@ public class Tank : MonoBehaviour
 
     void FixedUpdate()
     {
-        //旋转
-        float x = Input.GetAxis("HorizontalPlayer"+ PlayerNum);//获取横轴轴向
-        body.angularVelocity = transform.up * x * AngulaSpeed;
+        if(net_game.net.GetRooming()){
+            //旋转
+            float x = Input.GetAxis("HorizontalPlayer1");//获取横轴轴向
+            if(x  != 0 && (x < 1 && x > -1)){
+                net_game.Move_X(x);
+            }else if(x == 0 && net_game.net.Get_moveing_x()){
+                net_game.Move_X(x);
+            }else if((x == 1 && config.Get_xy_by_id(net_game.net.GetPlayerId()).x != 1 ) ||  (x == -1 && config.Get_xy_by_id(net_game.net.GetPlayerId()).x != -1)){
+                net_game.Move_X(x);
+            }
+            body.angularVelocity = transform.up * config.Get_xy_by_id(net_game.net.GetPlayerId()).x * AngulaSpeed;
+         
+            //前进后退
+            float y = Input.GetAxis("VerticalPlayer1");//获取纵轴轴向
+            if( y != 0 && (y < 1 && y > -1)){
+                net_game.Move_Y(y);
+            }else if(y == 0 && net_game.net.Get_moveing_y()){
+                net_game.Move_Y(y);
+            }else if((y == 1 && config.Get_xy_by_id(net_game.net.GetPlayerId()).y != 1 ) ||  (y == -1 && config.Get_xy_by_id(net_game.net.GetPlayerId()).y != -1)){
+                net_game.Move_Y(y);
+            }
+            body.velocity = transform.forward *config.Get_xy_by_id(net_game.net.GetPlayerId()).y * Speed;
 
-        //前进后退
-        float y = Input.GetAxis("VerticalPlayer"+ PlayerNum);//获取纵轴轴向
-        body.velocity = transform.forward * y * Speed;
-        if (Mathf.Abs(y) > 0.1 || Mathf.Abs(x) > 0.1)  //坦克行走时播放的声音
-        {
-            audioSource.clip = drivingAudio;
-            if (audioSource.isPlaying == false)
-                audioSource.Play();
-        }
-        else //坦克停止时播放的声音                                                  
-        {
-            audioSource.clip = idleAudio;
-            if (audioSource.isPlaying == false)
-                audioSource.Play();
+            if (Mathf.Abs(y) > 0.1 || Mathf.Abs(x) > 0.1)  //坦克行走时播放的声音
+            {
+                audioSource.clip = drivingAudio;
+                if (audioSource.isPlaying == false)
+                    audioSource.Play();
+            }
+            else //坦克停止时播放的声音                                                  
+            {
+                audioSource.clip = idleAudio;
+                if (audioSource.isPlaying == false)
+                    audioSource.Play();
+            }
         }
     }
 
