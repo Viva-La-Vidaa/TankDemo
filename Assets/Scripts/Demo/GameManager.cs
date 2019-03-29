@@ -6,7 +6,8 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
-    public GameObject tankPrefab;
+    public GameObject playerPrefab;
+    public GameObject enemyPrefab;
 
     private void Awake()
     {
@@ -24,7 +25,7 @@ public class GameManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.P))
         {
-            SpawnTank(2);//这里假设服务端发送过来的是2号
+            SpawnEnemy(2);//这里假设服务端发送过来的是2号
         }
     }
 
@@ -32,11 +33,20 @@ public class GameManager : MonoBehaviour
     /// tank生成
     /// </summary>
     /// <param name="TankNo">坦克的编号</param>
-    void SpawnTank(int TankNo)
+    void SpawnPlayer(int TankNo)//生成玩家
     {
-        GameObject go = Instantiate(tankPrefab) as GameObject;
+        GameObject go = Instantiate(playerPrefab) as GameObject;
+        go.transform.name = "Tank" + TankNo;
+    }
+
+    void SpawnEnemy(int TankNo)//生成敌人
+    {
+        GameObject go = Instantiate(enemyPrefab) as GameObject;
         go.transform.name = "Tank" + TankNo;
 
         //区分本地玩家与其它客户端玩家的特效处理
     }
+
+
+
 }

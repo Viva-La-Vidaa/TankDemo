@@ -279,7 +279,7 @@ GameObject:
   - component: {fileID: 6986879613606116171}
   - component: {fileID: 560107528554050377}
   m_Layer: 0
-  m_Name: Tank
+  m_Name: Enemy
   m_TagString: Tank
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -442,7 +442,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Speed: 5
   AngulaSpeed: 15
-  PlayerNum: 1
+  PlayerNum: 2
   gameManagerTransform: {fileID: 0}
   idleAudio: {fileID: 8300000, guid: 4932ab25b84dd7649b80af68a9660ddc, type: 3}
   drivingAudio: {fileID: 8300000, guid: d7ca9fb5aa30155449192b23d7fb3336, type: 3}
@@ -454,7 +454,7 @@ MonoBehaviour:
   fireKey: 32
   shellSpeed: 15
   shotClip: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}
-  audioSourceFire: {fileID: 0}
+  audioSourceFire: {fileID: 6986879613606116171}
 --- !u!1 &3616684435008834037
 GameObject:
   m_ObjectHideFlags: 0
