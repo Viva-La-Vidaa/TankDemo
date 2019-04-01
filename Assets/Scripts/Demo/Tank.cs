@@ -74,12 +74,10 @@ public class Tank : MonoBehaviour
             }else if((x == 1 && config.Get_xy_by_id(net_game.net.GetPlayerId()).x != 1 ) ||  (x == -1 && config.Get_xy_by_id(net_game.net.GetPlayerId()).x != -1)){
                 net_game.Move_X(x);
             }
-<<<<<<< HEAD
+
             Debug.LogWarning(transform.up * config.Get_xy_by_id(net_game.net.GetPlayerId()).x);
-            body.angularVelocity = transform.up * config.Get_xy_by_id(net_game.net.GetPlayerId()).x * AngulaSpeed;
-=======
             body.angularVelocity = transform.up * config.Get_xy_by_id(net_game.net.GetPlayerId()).x * angulaSpeed;
->>>>>>> ec351ba458bcf1f20903db7005166371df1f6e40
+
          
             //前进后退
             float y = Input.GetAxis("VerticalPlayer1");//获取纵轴轴向
