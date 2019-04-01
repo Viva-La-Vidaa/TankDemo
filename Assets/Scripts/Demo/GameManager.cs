@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Threading; 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -38,11 +38,16 @@ public class GameManager : MonoBehaviour
                     SpawnPlayer(id, config_value.values[i].x, config_value.values[i].y);
                 }else {
                     SpawnEnemy(id, config_value.values[i].x, config_value.values[i].y);
+                    Enemy.SetID(id);
                     Debug.Log("生成敌人"+id);
                 }
                 config.Add(id);
             }
             Debug.Log("游戏初始化完成");
+
+            Thread thread = new Thread(new ThreadStart(net_game.net.SetMoveValueByNet));//接受移动参数数据
+            thread.Start();
+
             b = true;
         }
         

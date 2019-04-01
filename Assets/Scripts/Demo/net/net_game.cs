@@ -26,6 +26,7 @@ namespace GAME{
 
     public enum MOVEOrder{MOVE_X,MOVE_Y}
     struct PlayerMsg {//玩家移动消息
+        public long ID;
         public MOVEOrder order;
         public float cmd;//数值
     }
@@ -53,8 +54,8 @@ namespace GAME{
 
 
         public SocketNetMgr(){
-            this._ip = "193.112.143.141"; //改为自己对外的 IP
-            //this._ip = "127.0.0.1";
+            //this._ip = "193.112.143.141"; //改为自己对外的 IP
+            this._ip = "127.0.0.1";
             this._port = 7000; //端口号
             this._playerid = 0;
             this._roomid = 0;
@@ -86,6 +87,7 @@ namespace GAME{
                 var buf = new byte[1024];
                 int n = this._socket.Receive(buf);
                 string data = Encoding.UTF8.GetString(buf,0,n);
+                Debug.LogError(data);
                 RoomMsg roomsg = JsonUtility.FromJson<RoomMsg>(data);
                 this._roomid = roomsg.roomid;
                 this._rooming = true;
@@ -126,9 +128,11 @@ namespace GAME{
         public void PlayerMove_X(float cmd){//5. X轴移动
             PlayerMsg playermsg;
             playermsg.order = MOVEOrder.MOVE_X;
+            playermsg.ID = _playerid;
             playermsg.cmd = cmd;
             this._socket.Send(Encoding.UTF8.GetBytes(JsonUtility.ToJson(playermsg)));
 
+            /*
             var buf = new byte[1024];
             int n = this._socket.Receive(buf);
             string data = Encoding.UTF8.GetString(buf,0,n);
@@ -141,14 +145,18 @@ namespace GAME{
                 this._moveing_x = true;
             else
                 this._moveing_x = false;
+             */
+
         }
 
         public void PlayerMove_Y(float cmd){//6. Y轴移动
             PlayerMsg playermsg;
+            playermsg.ID = _playerid;
             playermsg.order = MOVEOrder.MOVE_Y;
             playermsg.cmd = cmd;
             this._socket.Send(Encoding.UTF8.GetBytes(JsonUtility.ToJson(playermsg)));
             
+            /* 
             var buf = new byte[1024];
             int n = this._socket.Receive(buf);
             string data = Encoding.UTF8.GetString(buf,0,n);
@@ -161,6 +169,35 @@ namespace GAME{
                 this._moveing_y = true;
             else
                 this._moveing_y = false;
+            */
+        }
+
+        public void SetMoveValueByNet(){ //从服务器器获取运动状态并设置
+            while(true){
+                var buf = new byte[1024];
+                int n = this._socket.Receive(buf);
+                string data = Encoding.UTF8.GetString(buf,0,n);
+                PlayerMsg move = JsonUtility.FromJson<PlayerMsg>(data);
+
+                long p_id = move.ID;
+
+                if(move.order == MOVEOrder.MOVE_X){
+                    CONFIG.xy_Value v = config.Get_xy_by_id(p_id);
+                    config.Set_xy(p_id, move.cmd, v.y);
+                    if(move.cmd != 0 )
+                        this._moveing_x = true;
+                    else
+                        this._moveing_x = false;
+
+                }else if(move.order == MOVEOrder.MOVE_Y){
+                    CONFIG.xy_Value v = config.Get_xy_by_id(p_id);
+                    config.Set_xy(p_id, v.x, move.cmd);
+                    if(move.cmd != 0 ) 
+                        this._moveing_y = true;
+                    else
+                        this._moveing_y = false;
+                }
+            }    
         }
 
         public bool Get_moveing_x(){ //获取玩家X轴运动状态
@@ -243,7 +280,7 @@ public class net_game : MonoBehaviour
         net.PlayerMove_Y(cmd);
     }
     
-    static public void Game_Text(){//发送运动指令并改变运动状态
+    static public void Game_Text(){
         Join();//方便加入房间，后续要改动
         if(net.GetRooming()){
             Debug.Log("等待游戏开始");
