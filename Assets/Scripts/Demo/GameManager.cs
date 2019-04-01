@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
             CONFIG.Config_Value config_value = net_game.net.GetGameinit();
             long num = config_value.num;
 
-            for(long i=0; i<num; i++){
+            for (long i=0; i<num; i++){
                 long id = config_value.ids[i];
                 if(id == net_game.net.GetPlayerId()){
                     SpawnPlayer(id, config_value.values[i].x, config_value.values[i].y);
@@ -59,6 +59,7 @@ public class GameManager : MonoBehaviour
     void SpawnPlayer(long TankNo, float x, float y)//生成玩家
     {
         GameObject go = Instantiate(playerPrefab) as GameObject;
+        go.transform.tag = "Player";
         go.transform.name = "Tank" + TankNo;      
         Vector3 value = new Vector3(x,0,y);
         go.transform.position = value;
@@ -67,10 +68,10 @@ public class GameManager : MonoBehaviour
     void SpawnEnemy(long TankNo, float x, float y)//生成敌人
     {
         GameObject go = Instantiate(enemyPrefab) as GameObject;
+        go.transform.tag = "Enemy";
         go.transform.name = "Tank" + TankNo;
         Vector3 value = new Vector3(x,0,y);
         go.transform.position = value;
-        //区分本地玩家与其它客户端玩家的特效处理
     }
 
 

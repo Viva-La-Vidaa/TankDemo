@@ -1,13 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Tank : MonoBehaviour
 {
+    public int expValue = 0; //游戏中的经验值
+    public int levelValue = 1; //默认一级
+    public string nickName;//游戏呢称
+
     //坦克移动控制
-    public float Speed = 5;
-    public float AngulaSpeed = 15;
-    public float PlayerNum = 1;          //玩家编号,用于区分不同的控制
+    public float speed = 5;
+    public float angulaSpeed = 15;
+    public float playerNum = 1;    //玩家编号,用于区分不同的控制
     private Rigidbody body;
     public Transform gameManagerTransform;
 
@@ -18,6 +23,7 @@ public class Tank : MonoBehaviour
     public int Hp = 100;//坦克默认的血量
     public GameObject tankExplosion;
     public AudioClip tankExplosionAudio;
+    public Slider hpSlider;//血条
 
     public GameObject shellPrefab;
     public KeyCode fireKey = KeyCode.Space;//空格键开火
@@ -38,8 +44,6 @@ public class Tank : MonoBehaviour
     {
         //炮弹起始位置
         firePosition = transform.Find("FirePosition");
-        //初始坦克位置
-        System.Random random = new System.Random();
     }
 
     // Update is called once per frame
@@ -70,7 +74,7 @@ public class Tank : MonoBehaviour
             }else if((x == 1 && config.Get_xy_by_id(net_game.net.GetPlayerId()).x != 1 ) ||  (x == -1 && config.Get_xy_by_id(net_game.net.GetPlayerId()).x != -1)){
                 net_game.Move_X(x);
             }
-            body.angularVelocity = transform.up * config.Get_xy_by_id(net_game.net.GetPlayerId()).x * AngulaSpeed;
+            body.angularVelocity = transform.up * config.Get_xy_by_id(net_game.net.GetPlayerId()).x * angulaSpeed;
          
             //前进后退
             float y = Input.GetAxis("VerticalPlayer1");//获取纵轴轴向
@@ -81,7 +85,7 @@ public class Tank : MonoBehaviour
             }else if((y == 1 && config.Get_xy_by_id(net_game.net.GetPlayerId()).y != 1 ) ||  (y == -1 && config.Get_xy_by_id(net_game.net.GetPlayerId()).y != -1)){
                 net_game.Move_Y(y);
             }
-            body.velocity = transform.forward *config.Get_xy_by_id(net_game.net.GetPlayerId()).y * Speed;
+            body.velocity = transform.forward *config.Get_xy_by_id(net_game.net.GetPlayerId()).y * speed;
 
             if (Mathf.Abs(y) > 0.1 || Mathf.Abs(x) > 0.1)  //坦克行走时播放的声音
             {
@@ -106,6 +110,7 @@ public class Tank : MonoBehaviour
             return;
         //如果血量大于0,血量减少,伤害在10-20之间
         Hp -= Random.Range(10, 20);
+        hpSlider.value = Hp / 100;
         //收到伤害之后 血量为0 控制死亡效果
         if (Hp <= 0)
         {

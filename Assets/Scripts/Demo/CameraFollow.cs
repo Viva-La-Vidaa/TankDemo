@@ -9,16 +9,15 @@ public class CameraFollow : MonoBehaviour
     public float smooth = 1.5f;
     private Vector3 relCameraPos;
     private Quaternion rotation;
-    private Vector3 offset = new Vector3(-42,40,-25);//视角调好的偏移量
+    private Vector3 offset = new Vector3(-36, 48,-20);//视角调好的偏移量
 
     // Start is called before the first frame update
     void Start()
     {
         //默认Tank1为当前客户端玩家
-        player = GameObject.Find("Tank1").transform;
+        player = GameObject.FindGameObjectWithTag("Player").transform;
         transform.position = player.position + offset;//初始化相机位置
         rotation = transform.rotation;
-
         relCameraPos = transform.position - player.position;
     }
 

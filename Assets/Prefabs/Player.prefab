@@ -4889,7 +4889,7 @@ GameObject:
   - component: {fileID: 6292590671515484925}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Tank
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4901,7 +4901,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8089672776170250989}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -5049,9 +5049,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b422624c9e10a90418a2df5ba3bee884, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Speed: 5
-  AngulaSpeed: 15
-  PlayerNum: 1
+  expValue: 0
+  levelValue: 1
+  speed: 5
+  angulaSpeed: 15
+  playerNum: 1
   gameManagerTransform: {fileID: 0}
   idleAudio: {fileID: 8300000, guid: 4932ab25b84dd7649b80af68a9660ddc, type: 3}
   drivingAudio: {fileID: 8300000, guid: d7ca9fb5aa30155449192b23d7fb3336, type: 3}
