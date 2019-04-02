@@ -75,7 +75,6 @@ public class Tank : MonoBehaviour
                 net_game.Move_X(x);
             }
 
-            Debug.LogWarning(transform.up * config.Get_xy_by_id(net_game.net.GetPlayerId()).x);
             body.angularVelocity = transform.up * config.Get_xy_by_id(net_game.net.GetPlayerId()).x * angulaSpeed;
 
          

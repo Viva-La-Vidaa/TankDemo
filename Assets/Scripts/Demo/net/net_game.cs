@@ -35,6 +35,11 @@ namespace GAME{
         public bool gamestart;//数值
     }
 
+    struct MsgHead {//消息头
+        public int size;//消息长度
+    }
+
+   
     public class SocketNetMgr{
         private string _ip;
         private int _port;
@@ -63,6 +68,17 @@ namespace GAME{
             this._gameing = false;
             this._gameinit.values = new CONFIG.xy_Value[4];
         }
+
+        public byte[] pack(int size, byte[] body){//打包
+            MsgHead msghead;
+            msghead.size = size;
+            byte[] head = Encoding.UTF8.GetBytes(JsonUtility.ToJson(msghead));
+            byte[] tmp = new byte[head.Length + body.Length];
+            System.Buffer.BlockCopy(head, 0, tmp, 0, head.Length);
+            System.Buffer.BlockCopy(body, 0, tmp, head.Length, body.Length);
+            return tmp;
+        }
+
             //连接服务器
         public bool Connect(){//1. 连接
             this._socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -87,7 +103,8 @@ namespace GAME{
                 var buf = new byte[1024];
                 int n = this._socket.Receive(buf);
                 string data = Encoding.UTF8.GetString(buf,0,n);
-                Debug.LogError(data);
+                Debug.LogWarning(data);
+                Debug.LogWarning(n);
                 RoomMsg roomsg = JsonUtility.FromJson<RoomMsg>(data);
                 this._roomid = roomsg.roomid;
                 this._rooming = true;
@@ -130,23 +147,9 @@ namespace GAME{
             playermsg.order = MOVEOrder.MOVE_X;
             playermsg.ID = _playerid;
             playermsg.cmd = cmd;
-            this._socket.Send(Encoding.UTF8.GetBytes(JsonUtility.ToJson(playermsg)));
-
-            /*
-            var buf = new byte[1024];
-            int n = this._socket.Receive(buf);
-            string data = Encoding.UTF8.GetString(buf,0,n);
-            PlayerMsg move = JsonUtility.FromJson<PlayerMsg>(data);
-
-            CONFIG.xy_Value v = config.Get_xy_by_id(_playerid);
-            config.Set_xy(_playerid, move.cmd, v.y);
-
-            if(move.cmd != 0 )
-                this._moveing_x = true;
-            else
-                this._moveing_x = false;
-             */
-
+            byte[] body = Encoding.UTF8.GetBytes(JsonUtility.ToJson(playermsg));
+            byte[] data = pack(body.Length, body);
+            this._socket.Send(data);
         }
 
         public void PlayerMove_Y(float cmd){//6. Y轴移动
@@ -154,33 +157,35 @@ namespace GAME{
             playermsg.ID = _playerid;
             playermsg.order = MOVEOrder.MOVE_Y;
             playermsg.cmd = cmd;
-            this._socket.Send(Encoding.UTF8.GetBytes(JsonUtility.ToJson(playermsg)));
-            
-            /* 
-            var buf = new byte[1024];
-            int n = this._socket.Receive(buf);
-            string data = Encoding.UTF8.GetString(buf,0,n);
-            PlayerMsg move = JsonUtility.FromJson<PlayerMsg>(data);
-
-            CONFIG.xy_Value v = config.Get_xy_by_id(_playerid);
-            config.Set_xy(_playerid, v.x, move.cmd);
-
-            if(move.cmd != 0 ) 
-                this._moveing_y = true;
-            else
-                this._moveing_y = false;
-            */
+            byte[] body = Encoding.UTF8.GetBytes(JsonUtility.ToJson(playermsg));
+            byte[] data = pack(body.Length, body);
+            this._socket.Send(data);
         }
 
         public void SetMoveValueByNet(){ //从服务器器获取运动状态并设置
             while(true){
+                //读包头
                 var buf = new byte[1024];
-                int n = this._socket.Receive(buf);
-                string data = Encoding.UTF8.GetString(buf,0,n);
+                int n1 = this._socket.Receive(buf, 11, 0);
+                if(n1 != 11){
+                    Debug.LogError("消息长度出错");
+                    continue;
+                }
+                string headmsg = Encoding.UTF8.GetString(buf,0,n1);
+                Debug.LogWarning(headmsg);
+                MsgHead head = JsonUtility.FromJson<MsgHead>(headmsg);
+ 
+                int n2 = this._socket.Receive(buf, head.size, 0);
+                if(n2 != head.size){
+                    Debug.LogError("消息长度出错");
+                    continue;
+                }
+                string data = Encoding.UTF8.GetString(buf,0,n2);
+                Debug.LogWarning(data);
                 PlayerMsg move = JsonUtility.FromJson<PlayerMsg>(data);
 
+                //开始解析
                 long p_id = move.ID;
-
                 if(move.order == MOVEOrder.MOVE_X){
                     CONFIG.xy_Value v = config.Get_xy_by_id(p_id);
                     config.Set_xy(p_id, move.cmd, v.y);

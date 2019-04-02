@@ -67,7 +67,6 @@ public class Enemy : MonoBehaviour{
     void FixedUpdate()
     {
         //移动
-        Debug.Log(_EnemyID);
         _X = config.Get_xy_by_id(_EnemyID).x;
         _Y = config.Get_xy_by_id(_EnemyID).y;         
         body.angularVelocity = transform.up * _X * AngulaSpeed;
