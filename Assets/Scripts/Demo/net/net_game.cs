@@ -29,6 +29,10 @@ namespace GAME{
         public long ID;
         public MOVEOrder order;
         public float cmd;//数值
+
+        public Vector3 xz;
+
+        public Quaternion y;
     }
 
     struct GameStartMsg {//玩家移动消息
@@ -104,7 +108,6 @@ namespace GAME{
                 int n = this._socket.Receive(buf);
                 string data = Encoding.UTF8.GetString(buf,0,n);
                 Debug.LogWarning(data);
-                Debug.LogWarning(n);
                 RoomMsg roomsg = JsonUtility.FromJson<RoomMsg>(data);
                 this._roomid = roomsg.roomid;
                 this._rooming = true;
@@ -142,21 +145,25 @@ namespace GAME{
             this._gameinit = JsonUtility.FromJson<CONFIG.Config_Value>(data);
         }  
 
-        public void PlayerMove_X(float cmd){//5. X轴移动
+        public void PlayerMove_X(float cmd, Vector3 v, Quaternion q){//5. X轴移动
             PlayerMsg playermsg;
             playermsg.order = MOVEOrder.MOVE_X;
             playermsg.ID = _playerid;
             playermsg.cmd = cmd;
+            playermsg.xz = v;
+            playermsg.y = q;
             byte[] body = Encoding.UTF8.GetBytes(JsonUtility.ToJson(playermsg));
             byte[] data = pack(body.Length, body);
             this._socket.Send(data);
         }
 
-        public void PlayerMove_Y(float cmd){//6. Y轴移动
+        public void PlayerMove_Y(float cmd, Vector3 v, Quaternion q){//6. Y轴移动
             PlayerMsg playermsg;
             playermsg.ID = _playerid;
             playermsg.order = MOVEOrder.MOVE_Y;
             playermsg.cmd = cmd;
+            playermsg.xz = v;
+            playermsg.y = q;
             byte[] body = Encoding.UTF8.GetBytes(JsonUtility.ToJson(playermsg));
             byte[] data = pack(body.Length, body);
             this._socket.Send(data);
@@ -166,8 +173,8 @@ namespace GAME{
             while(true){
                 //读包头
                 var buf = new byte[1024];
-                int n1 = this._socket.Receive(buf, 11, 0);
-                if(n1 != 11){
+                int n1 = this._socket.Receive(buf, 12, 0);
+                if(n1 != 12){
                     Debug.LogError("消息长度出错");
                     continue;
                 }
@@ -182,10 +189,12 @@ namespace GAME{
                 }
                 string data = Encoding.UTF8.GetString(buf,0,n2);
                 Debug.LogWarning(data);
+
                 PlayerMsg move = JsonUtility.FromJson<PlayerMsg>(data);
 
                 //开始解析
                 long p_id = move.ID;
+                config.xyz_Set(p_id,move.xz,move.y);
                 if(move.order == MOVEOrder.MOVE_X){
                     CONFIG.xy_Value v = config.Get_xy_by_id(p_id);
                     config.Set_xy(p_id, move.cmd, v.y);
@@ -193,7 +202,6 @@ namespace GAME{
                         this._moveing_x = true;
                     else
                         this._moveing_x = false;
-
                 }else if(move.order == MOVEOrder.MOVE_Y){
                     CONFIG.xy_Value v = config.Get_xy_by_id(p_id);
                     config.Set_xy(p_id, v.x, move.cmd);
@@ -277,12 +285,12 @@ public class net_game : MonoBehaviour
         Debug.Log("退出房间");
     }
 
-    static public void Move_X(float cmd){//发送运动指令并改变运动状态
-        net.PlayerMove_X(cmd);
+    static public void Move_X(float cmd, Vector3 v, Quaternion q){//发送运动指令并改变运动状态
+        net.PlayerMove_X(cmd, v, q);
     }
 
-    static public void Move_Y(float cmd){//发送运动指令并改变运动状态
-        net.PlayerMove_Y(cmd);
+    static public void Move_Y(float cmd, Vector3 v, Quaternion q){//发送运动指令并改变运动状态
+        net.PlayerMove_Y(cmd, v, q);
     }
     
     static public void Game_Text(){

@@ -24,10 +24,8 @@ public class Enemy : MonoBehaviour{
     public AudioClip shotClip;
     public AudioSource audioSourceFire;
 
-
     private float _X;
     private float _Y;
-    static private long _EnemyID;
 
 
     void Start()
@@ -41,7 +39,7 @@ public class Enemy : MonoBehaviour{
     void InitOperation()
     {
         //炮弹起始位置
-        firePosition = transform.Find("FirePosition");
+        firePosition = transform.Find ("FirePosition");
         //初始坦克位置
         System.Random random = new System.Random();
     }
@@ -66,6 +64,21 @@ public class Enemy : MonoBehaviour{
 
     void FixedUpdate()
     {
+        GameObject player = this.gameObject;
+        if(player == null){
+            Debug.LogError("this.GameObject错误");
+            return ;
+        }
+        long _EnemyID = config.Get_id_by_Tag(player.name);
+
+        //统一位置
+        //GameObject player = GameObject.Find("Tank"+_EnemyID);
+        float l = Vector3.Distance(player.transform.position,config.xyz_Get_by_id(_EnemyID).xz);//距离差值
+        if(l > 3){
+            player.transform.SetPositionAndRotation(config.xyz_Get_by_id(_EnemyID).xz, config.xyz_Get_by_id(_EnemyID).y);
+            Debug.LogWarning("同步位置");
+        }
+
         //移动
         _X = config.Get_xy_by_id(_EnemyID).x;
         _Y = config.Get_xy_by_id(_EnemyID).y;         
@@ -83,8 +96,7 @@ public class Enemy : MonoBehaviour{
             audioSource.clip = idleAudio;
             if (audioSource.isPlaying == false)
                 audioSource.Play();
-        }
-        
+        }      
     }
 
     //Tank伤害计算
@@ -104,9 +116,5 @@ public class Enemy : MonoBehaviour{
             GameObject.Destroy(this.gameObject);
         }
         */
-    }
-
-    static public void SetID(long id){
-        _EnemyID = id;
     }
 }
