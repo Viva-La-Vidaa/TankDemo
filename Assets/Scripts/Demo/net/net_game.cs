@@ -26,6 +26,7 @@ namespace GAME{
 
     public enum MOVEOrder{MOVE_X,MOVE_Y}
     struct PlayerMsg {//玩家移动消息
+        public long ID;
         public MOVEOrder order;
         public float cmd;//数值
     }
@@ -59,7 +60,7 @@ namespace GAME{
             this._playerid = 0;
             this._roomid = 0;
             this._rooming = false;
-            this._gameing = false;
+            this._gameing = false;//默认值false
             this._gameinit.values = new CONFIG.xy_Value[4];
         }
             //连接服务器
@@ -126,6 +127,7 @@ namespace GAME{
         public void PlayerMove_X(float cmd){//5. X轴移动
             PlayerMsg playermsg;
             playermsg.order = MOVEOrder.MOVE_X;
+            playermsg.ID = _playerid;
             playermsg.cmd = cmd;
             this._socket.Send(Encoding.UTF8.GetBytes(JsonUtility.ToJson(playermsg)));
 
@@ -145,6 +147,7 @@ namespace GAME{
 
         public void PlayerMove_Y(float cmd){//6. Y轴移动
             PlayerMsg playermsg;
+            playermsg.ID = _playerid;
             playermsg.order = MOVEOrder.MOVE_Y;
             playermsg.cmd = cmd;
             this._socket.Send(Encoding.UTF8.GetBytes(JsonUtility.ToJson(playermsg)));
@@ -243,7 +246,7 @@ public class net_game : MonoBehaviour
         net.PlayerMove_Y(cmd);
     }
     
-    static public void Game_Text(){//发送运动指令并改变运动状态
+    static public void Game_Text(){
         Join();//方便加入房间，后续要改动
         if(net.GetRooming()){
             Debug.Log("等待游戏开始");

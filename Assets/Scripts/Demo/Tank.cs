@@ -59,6 +59,8 @@ public class Tank : MonoBehaviour
             //设置炮弹的父物体
             go.transform.parent = gameManagerTransform;
             go.GetComponent<Rigidbody>().velocity = go.transform.forward * shellSpeed;//炮弹速度
+            Hp = Hp - 20;
+            hpSlider.value = Hp / 100;
         }
     }
 

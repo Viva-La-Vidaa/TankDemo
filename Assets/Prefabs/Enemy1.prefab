@@ -9860,6 +9860,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   expValue: 0
   levelValue: 1
+  nickName: 
   speed: 5
   angulaSpeed: 15
   playerNum: 1
@@ -9869,6 +9870,7 @@ MonoBehaviour:
   Hp: 100
   tankExplosion: {fileID: 151086, guid: ee49a9a8678ecf8468eb488e1ac8d42b, type: 3}
   tankExplosionAudio: {fileID: 8300000, guid: 5c27182a28a7eb942a362e6d198fe0e6, type: 3}
+  hpSlider: {fileID: 0}
   shellPrefab: {fileID: 2998448203942285343, guid: 7fe3b367c9ddc564f924fa7e30ad8204,
     type: 3}
   fireKey: 32
