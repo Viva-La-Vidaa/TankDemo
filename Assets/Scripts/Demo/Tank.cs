@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+
+
 public class Tank : MonoBehaviour
 {
     public int expValue = 0; //游戏中的经验值
@@ -67,25 +69,24 @@ public class Tank : MonoBehaviour
     void FixedUpdate()
     {
         if(net_game.net.GetRooming()){
+            GameObject player = GameObject.Find(net_game.net.GetPlayerId().ToString());
             //旋转
             float x = Input.GetAxis("HorizontalPlayer1");//获取横轴轴向
             if(x  != 0 && (x < 1 && x > -1)){
-                net_game.Move_X(x);
+                net_game.Move_X(x, player.transform.position, player.transform.rotation);
             }else if(x == 0 && net_game.net.Get_moveing_x()){
-                net_game.Move_X(x);
+                net_game.Move_X(x, player.transform.position, player.transform.rotation);
             }else if((x == 1 && config.Get_xy_by_id(net_game.net.GetPlayerId()).x != 1 ) ||  (x == -1 && config.Get_xy_by_id(net_game.net.GetPlayerId()).x != -1)){
-                net_game.Move_X(x);
+                net_game.Move_X(x, player.transform.position, player.transform.rotation);
             }
             body.angularVelocity = transform.up * config.Get_xy_by_id(net_game.net.GetPlayerId()).x * angulaSpeed;
-         
+
             //前进后退
             float y = Input.GetAxis("VerticalPlayer1");//获取纵轴轴向
-            if( y != 0 && (y < 1 && y > -1)){
-                net_game.Move_Y(y);
+            if( y != 0){
+                net_game.Move_Y(y, player.transform.position, player.transform.rotation);
             }else if(y == 0 && net_game.net.Get_moveing_y()){
-                net_game.Move_Y(y);
-            }else if((y == 1 && config.Get_xy_by_id(net_game.net.GetPlayerId()).y != 1 ) ||  (y == -1 && config.Get_xy_by_id(net_game.net.GetPlayerId()).y != -1)){
-                net_game.Move_Y(y);
+                net_game.Move_Y(y, player.transform.position, player.transform.rotation);
             }
             body.velocity = transform.forward *config.Get_xy_by_id(net_game.net.GetPlayerId()).y * speed;
 

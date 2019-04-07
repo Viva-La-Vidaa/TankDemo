@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using System.Threading; 
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
@@ -34,15 +34,20 @@ public class GameManager : MonoBehaviour
 
             for (long i=0; i<num; i++){
                 long id = config_value.ids[i];
+                config.Add(id);
+                config.xyz_Add(id);//统一位置
                 if(id == net_game.net.GetPlayerId()){
                     SpawnPlayer(id, config_value.values[i].x, config_value.values[i].y);
                 }else {
                     SpawnEnemy(id, config_value.values[i].x, config_value.values[i].y);
                     Debug.Log("生成敌人"+id);
                 }
-                config.Add(id);
             }
             Debug.Log("游戏初始化完成");
+
+            Thread thread = new Thread(new ThreadStart(net_game.net.SetMoveValueByNet));//接受移动参数数据
+            thread.Start();
+
             b = true;
         }
         
@@ -60,7 +65,7 @@ public class GameManager : MonoBehaviour
     {
         GameObject go = Instantiate(playerPrefab) as GameObject;
         go.transform.tag = "Player";
-        go.transform.name = "Tank" + TankNo;      
+        go.transform.name = TankNo.ToString();    
         Vector3 value = new Vector3(x,0,y);
         go.transform.position = value;
     }
@@ -69,8 +74,12 @@ public class GameManager : MonoBehaviour
     {
         GameObject go = Instantiate(enemyPrefab) as GameObject;
         go.transform.tag = "Enemy";
-        go.transform.name = "Tank" + TankNo;
+        go.transform.name = TankNo.ToString();
         Vector3 value = new Vector3(x,0,y);
+        config.ID_Add(go.transform.name);
+        config.Set_ID(go.transform.name, TankNo);
+        Quaternion q = new Quaternion(0,0,0,0);
+        config.xyz_Set(TankNo, value, q);
         go.transform.position = value;
     }
 
