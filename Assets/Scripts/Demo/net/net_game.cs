@@ -59,8 +59,8 @@ namespace GAME{
 
 
         public SocketNetMgr(){
-            //this._ip = "193.112.143.141"; //改为自己对外的 IP
-            this._ip = "127.0.0.1";
+            this._ip = "193.112.143.141"; //改为自己对外的 IP
+            //this._ip = "127.0.0.1";
             this._port = 7000; //端口号
             this._playerid = 0;
             this._roomid = 0;
