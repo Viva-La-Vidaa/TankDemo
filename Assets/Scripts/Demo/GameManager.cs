@@ -7,7 +7,8 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get; private set; }
 
     public GameObject playerPrefab;
-    public GameObject enemyPrefab;
+    public GameObject[] enemyPrefabs;
+    private int enemyNo;//敌人编号
 
     private void Awake()
     {
@@ -28,6 +29,7 @@ public class GameManager : MonoBehaviour
             Debug.Log("等待游戏开始" + i++);//替换为等待场景
         }else if(!b){
             Debug.Log("游戏开始");
+            enemyNo = 0;
             net_game.net.GameMsgInit();//初始化场景
             CONFIG.Config_Value config_value = net_game.net.GetGameinit();
             long num = config_value.num;
@@ -72,11 +74,12 @@ public class GameManager : MonoBehaviour
 
     void SpawnEnemy(long TankNo, float x, float y)//生成敌人
     {
-        GameObject go = Instantiate(enemyPrefab) as GameObject;
+        GameObject go = Instantiate(enemyPrefabs[enemyNo]) as GameObject;
         go.transform.tag = "Enemy";
         go.transform.name = "Tank" + TankNo;
         Vector3 value = new Vector3(x,0,y);
         go.transform.position = value;
+        enemyNo++;
     }
 
 

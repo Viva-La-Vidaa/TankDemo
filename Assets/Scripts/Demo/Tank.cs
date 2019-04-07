@@ -14,7 +14,7 @@ public class Tank : MonoBehaviour
     public float angulaSpeed = 15;
     public float playerNum = 1;    //玩家编号,用于区分不同的控制
     private Rigidbody body;
-    public Transform gameManagerTransform;
+    private Transform gameManagerTransform;
 
     public AudioClip idleAudio;
     public AudioClip drivingAudio;
@@ -24,6 +24,7 @@ public class Tank : MonoBehaviour
     public GameObject tankExplosion;
     public AudioClip tankExplosionAudio;
     public Slider hpSlider;//血条
+    private Text username;
 
     public GameObject shellPrefab;
     public KeyCode fireKey = KeyCode.Space;//空格键开火
@@ -36,6 +37,8 @@ public class Tank : MonoBehaviour
     {
         body = this.GetComponent<Rigidbody>();
         audioSource = this.GetComponent<AudioSource>();
+        hpSlider = GameObject.Find("HpSlider").GetComponent<Slider>();
+        gameManagerTransform = GameObject.Find("GameManager").transform;
         InitOperation();
     }
 
@@ -49,7 +52,7 @@ public class Tank : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(fireKey))
+        if (Input.GetKeyDown(fireKey) && this.transform.tag == "Player")
         {
             //AudioSource.PlayClipAtPoint(shotClip, transform.position, 1.0f);//开火的声音
             audioSourceFire.clip = shotClip;
@@ -59,14 +62,15 @@ public class Tank : MonoBehaviour
             //设置炮弹的父物体
             go.transform.parent = gameManagerTransform;
             go.GetComponent<Rigidbody>().velocity = go.transform.forward * shellSpeed;//炮弹速度
-            Hp = Hp - 20;
-            hpSlider.value = Hp / 100;
+
+            //测试 玩家受伤
+            TakeDamage();
         }
     }
 
     void FixedUpdate()
     {
-        if(net_game.net.GetRooming()){
+        if(net_game.net.GetRooming()&&this.transform.tag=="Player"){
             //旋转
             float x = Input.GetAxis("HorizontalPlayer1");//获取横轴轴向
             if(x  != 0 && (x < 1 && x > -1)){
@@ -113,8 +117,8 @@ public class Tank : MonoBehaviour
         if (Hp <= 0)
             return;
         //如果血量大于0,血量减少,伤害在10-20之间
-        Hp -= Random.Range(10, 20);
-        hpSlider.value = Hp / 100;
+        Hp -= Random.Range(5, 10);
+        hpSlider.value = Hp / 100.0f;
         //收到伤害之后 血量为0 控制死亡效果
         if (Hp <= 0)
         {

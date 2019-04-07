@@ -586,10 +586,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: add308e766575174996981d048d5b49a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerPrefab: {fileID: 8089672776170250989, guid: 6d96c290ab98d7b41984c14decd29ee5,
+  playerPrefab: {fileID: 6877409648859326199, guid: 6d96c290ab98d7b41984c14decd29ee5,
     type: 3}
-  enemyPrefab: {fileID: 9128289503427532719, guid: a0e59d29bb920844e9b60009a7eac1c7,
-    type: 3}
+  enemyPrefabs:
+  - {fileID: 3292596683861920646, guid: a0e59d29bb920844e9b60009a7eac1c7, type: 3}
+  - {fileID: 7670395588021532253, guid: 8313b74dcb73b9047a17d689bf0ebbdb, type: 3}
+  - {fileID: 2224568608997566361, guid: c73ecfd77d4361442a260da889a8924d, type: 3}
 --- !u!1 &831905999
 GameObject:
   m_ObjectHideFlags: 0
@@ -662,7 +664,6 @@ RectTransform:
   m_Children:
   - {fileID: 1212198331}
   - {fileID: 1714447478}
-  - {fileID: 884201673}
   - {fileID: 971452154}
   - {fileID: 1884515807}
   - {fileID: 1976721691}
@@ -687,7 +688,7 @@ GameObject:
   - component: {fileID: 884201674}
   - component: {fileID: 884201676}
   m_Layer: 5
-  m_Name: nicknameTxt
+  m_Name: usernameTxt
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -704,12 +705,12 @@ RectTransform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 838451320}
-  m_RootOrder: 2
+  m_Father: {fileID: 1714447478}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
-  m_AnchoredPosition: {x: 83.1, y: -14.36}
+  m_AnchoredPosition: {x: 186.20001, y: -14.36}
   m_SizeDelta: {x: 320.96, y: 28.72}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &884201674
@@ -846,7 +847,7 @@ GameObject:
   - component: {fileID: 971071942}
   - component: {fileID: 971071943}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: HpSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -954,7 +955,7 @@ RectTransform:
   m_Children:
   - {fileID: 1623539796}
   m_Father: {fileID: 838451320}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -1430,7 +1431,7 @@ GameObject:
   - component: {fileID: 1714447480}
   - component: {fileID: 1714447479}
   m_Layer: 5
-  m_Name: nickname
+  m_Name: username
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1446,7 +1447,8 @@ RectTransform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 884201673}
   m_Father: {fileID: 838451320}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -1673,7 +1675,7 @@ GameObject:
   - component: {fileID: 1884515809}
   - component: {fileID: 1884515808}
   m_Layer: 5
-  m_Name: HpSlider
+  m_Name: Hp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1692,7 +1694,7 @@ RectTransform:
   m_Children:
   - {fileID: 971071942}
   m_Father: {fileID: 838451320}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -1769,7 +1771,7 @@ GameObject:
   - component: {fileID: 1976721692}
   - component: {fileID: 1976721694}
   m_Layer: 5
-  m_Name: ExpSlider
+  m_Name: Exp
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1788,7 +1790,7 @@ RectTransform:
   m_Children:
   - {fileID: 2078497856}
   m_Father: {fileID: 838451320}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 1}
   m_AnchorMax: {x: 0.5, y: 1}
@@ -1937,7 +1939,7 @@ GameObject:
   - component: {fileID: 2078497856}
   - component: {fileID: 2078497857}
   m_Layer: 5
-  m_Name: Slider
+  m_Name: ExpSlider
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
