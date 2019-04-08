@@ -44,6 +44,8 @@ public class Tank : MonoBehaviour
     {
         body = this.GetComponent<Rigidbody>();
         audioSource = this.GetComponent<AudioSource>();
+        gameManagerTransform = GameObject.Find("GameManager").transform;
+        hpSlider = GameObject.Find("HpSlider").GetComponent<Slider>();
         InitOperation();
     }
 
@@ -57,7 +59,7 @@ public class Tank : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(fireKey))
+        if (Input.GetKeyDown(fireKey)&& this.transform.tag == "Player")
         {
             //AudioSource.PlayClipAtPoint(shotClip, transform.position, 1.0f);//开火的声音
             audioSourceFire.clip = shotClip;
@@ -72,7 +74,7 @@ public class Tank : MonoBehaviour
 
     void FixedUpdate()
     {
-        if(net_game.net.GetRooming()){
+        if(net_game.net.GetRooming()&&this.transform.tag=="Player"){
             GameObject player = this.gameObject;
             if(player == null){
                 Debug.LogError("this.GameObject错误");
@@ -119,7 +121,7 @@ public class Tank : MonoBehaviour
             return;
         //如果血量大于0,血量减少,伤害在10-20之间
         Hp -= Random.Range(10, 20);
-        hpSlider.value = Hp / 100;
+        hpSlider.value = Hp / 100.0f;
         //收到伤害之后 血量为0 控制死亡效果
         if (Hp <= 0)
         {

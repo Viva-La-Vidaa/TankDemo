@@ -440,11 +440,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 534669902}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6ea61eeb5f349b449b6ddcb6fce5a5f4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 0}
   smooth: 1.5
 --- !u!1 &642733775
 GameObject:
@@ -592,6 +593,8 @@ MonoBehaviour:
   - {fileID: 3292596683861920646, guid: a0e59d29bb920844e9b60009a7eac1c7, type: 3}
   - {fileID: 7670395588021532253, guid: 8313b74dcb73b9047a17d689bf0ebbdb, type: 3}
   - {fileID: 2224568608997566361, guid: c73ecfd77d4361442a260da889a8924d, type: 3}
+  cameraFollow: {fileID: 534669907}
+  mainCamera: {fileID: 0}
 --- !u!1 &831905999
 GameObject:
   m_ObjectHideFlags: 0
@@ -1793,7 +1796,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.73556834, y: 0.082304075}
   m_AnchorMax: {x: 0.73556834, y: 0.082304075}
-  m_AnchoredPosition: {x: -9.949997, y: -1}
+  m_AnchoredPosition: {x: -9.950012, y: -1}
   m_SizeDelta: {x: 612.9, y: 237.8}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1958824445

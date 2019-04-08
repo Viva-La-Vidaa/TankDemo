@@ -1,13 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using System.Threading; 
+using System.Threading;
+
 public class GameManager : MonoBehaviour
 {
     public static GameManager Instance { get; private set; }
 
     public GameObject playerPrefab;
     public GameObject[] enemyPrefabs;
+    public CameraFollow cameraFollow;
     private int enemyNo;//敌人编号
 
     private void Awake()
@@ -18,7 +20,6 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
     }
     int i = 0;
     bool b = false;
@@ -40,7 +41,9 @@ public class GameManager : MonoBehaviour
                 config.xyz_Add(id);//统一位置
                 if(id == net_game.net.GetPlayerId()){
                     SpawnPlayer(id, config_value.values[i].x, config_value.values[i].y);
-                }else {
+                    cameraFollow.player = GameObject.FindGameObjectWithTag("Player").transform;
+                }
+                else {
                     SpawnEnemy(id, config_value.values[i].x, config_value.values[i].y);
                     Debug.Log("生成敌人"+id);
                 }
@@ -78,7 +81,6 @@ public class GameManager : MonoBehaviour
         config.Set_ID(go.transform.name, TankNo);
         config.Name_Add(TankNo);
         config.Set_Name(TankNo, go.transform.name);
-
         go.transform.position = value;
     }
 
