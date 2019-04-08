@@ -61,14 +61,7 @@ public class Tank : MonoBehaviour
     {
         if (Input.GetKeyDown(fireKey)&& this.transform.tag == "Player")
         {
-            //AudioSource.PlayClipAtPoint(shotClip, transform.position, 1.0f);//开火的声音
-            audioSourceFire.clip = shotClip;
-            if (audioSource.isPlaying == false)
-                audioSource.Play();
-            GameObject go = GameObject.Instantiate(shellPrefab, firePosition.position, firePosition.rotation) as GameObject;
-            //设置炮弹的父物体
-            go.transform.parent = gameManagerTransform;
-            go.GetComponent<Rigidbody>().velocity = go.transform.forward * shellSpeed;//炮弹速度
+            AttackTank();
         }
     }
 
@@ -113,7 +106,20 @@ public class Tank : MonoBehaviour
         }
     }
 
-    //Tank伤害计算
+    //攻击
+    void AttackTank()
+    {
+        //AudioSource.PlayClipAtPoint(shotClip, transform.position, 1.0f);//开火的声音
+        audioSourceFire.clip = shotClip;
+        if (audioSource.isPlaying == false)
+            audioSource.Play();
+        GameObject go = GameObject.Instantiate(shellPrefab, firePosition.position, firePosition.rotation) as GameObject;
+        //设置炮弹的父物体
+        go.transform.parent = gameManagerTransform;
+        go.GetComponent<Rigidbody>().velocity = go.transform.forward * shellSpeed;//炮弹速度
+    }
+
+    //Tank受伤害计算
     void TakeDamage()
     {
         //如果血量已小于0,直接结束
@@ -129,5 +135,19 @@ public class Tank : MonoBehaviour
             GameObject.Instantiate(tankExplosion, transform.position + Vector3.up, transform.rotation);//实例化tankExplosion
             GameObject.Destroy(this.gameObject);
         }
+    }
+
+    //升级
+    void Upgrade()
+    {
+
+    }
+
+    void ChangeScale(int level)
+    {
+        float scaleValue = 0.5f * (level + 1);
+        float smooth = 10f;
+        Vector3 vector3 = new Vector3(scaleValue, scaleValue, scaleValue);
+        transform.localScale = Vector3.Lerp(transform.localScale, vector3, smooth * Time.deltaTime);
     }
 }
