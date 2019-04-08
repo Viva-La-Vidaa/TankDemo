@@ -1,8 +1,10 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 using System.Net.Sockets;
 using System.Text;
 using UnityEngine.UI;
 using System.Threading; 
+
 
 namespace GAME{
     //ClientMsg 客户端消息
@@ -23,12 +25,16 @@ namespace GAME{
         public bool joinroom;//表示是否成功加入房间
         public long roomid;//加入的房间id
     }
-
-    public enum MOVEOrder{MOVE_X,MOVE_Y}
-    struct PlayerMsg {//玩家移动消息
+    public enum MOVEOrder{MOVE_X,MOVE_Y,SITE}
+    public struct PlayerMsg {//玩家操作消息
         public long ID;
         public MOVEOrder order;
         public float cmd;//数值
+        public float cmd2;//数值
+
+        public Vector3 xz;
+
+        public Quaternion y;
     }
 
     struct GameStartMsg {//玩家移动消息
@@ -51,11 +57,13 @@ namespace GAME{
         private bool _gameing;
 
 
-        //移动参数
-        private bool _moveing_x;//x轴是否运动
-        private bool _moveing_y;//y轴是否运动
-
         private CONFIG.Config_Value _gameinit; //游戏初始化位置配置
+
+        public Queue<PlayerMsg> FrameList;//帧同步队列
+
+        public Text t;
+        int My = 0;
+        int you = 0;
 
 
         public SocketNetMgr(){
@@ -65,8 +73,14 @@ namespace GAME{
             this._playerid = 0;
             this._roomid = 0;
             this._rooming = false;
-            this._gameing = false;//默认值false
+            this._gameing = false;
             this._gameinit.values = new CONFIG.xy_Value[4];
+            this.FrameList = new Queue<PlayerMsg>();
+            t = GameObject.FindGameObjectWithTag("T").GetComponent<Text>();
+            if(t== null){
+                Debug.LogError("--");
+            }
+            t.text = " ";
         }
 
         public byte[] pack(int size, byte[] body){//打包
@@ -104,7 +118,6 @@ namespace GAME{
                 int n = this._socket.Receive(buf);
                 string data = Encoding.UTF8.GetString(buf,0,n);
                 Debug.LogWarning(data);
-                Debug.LogWarning(n);
                 RoomMsg roomsg = JsonUtility.FromJson<RoomMsg>(data);
                 this._roomid = roomsg.roomid;
                 this._rooming = true;
@@ -142,32 +155,26 @@ namespace GAME{
             this._gameinit = JsonUtility.FromJson<CONFIG.Config_Value>(data);
         }  
 
-        public void PlayerMove_X(float cmd){//5. X轴移动
-            PlayerMsg playermsg;
-            playermsg.order = MOVEOrder.MOVE_X;
-            playermsg.ID = _playerid;
-            playermsg.cmd = cmd;
-            byte[] body = Encoding.UTF8.GetBytes(JsonUtility.ToJson(playermsg));
-            byte[] data = pack(body.Length, body);
-            this._socket.Send(data);
-        }
 
-        public void PlayerMove_Y(float cmd){//6. Y轴移动
+        public void PlayerMove(float x, float y){//7.移动
             PlayerMsg playermsg;
             playermsg.ID = _playerid;
             playermsg.order = MOVEOrder.MOVE_Y;
-            playermsg.cmd = cmd;
+            playermsg.cmd = x;
+            playermsg.cmd2 = y;
+            playermsg.xz = Vector3.zero;
+            playermsg.y = new Quaternion();
             byte[] body = Encoding.UTF8.GetBytes(JsonUtility.ToJson(playermsg));
             byte[] data = pack(body.Length, body);
             this._socket.Send(data);
         }
-
+        
         public void SetMoveValueByNet(){ //从服务器器获取运动状态并设置
             while(true){
                 //读包头
                 var buf = new byte[1024];
-                int n1 = this._socket.Receive(buf, 11, 0);
-                if(n1 != 11){
+                int n1 = this._socket.Receive(buf, 12, 0);
+                if(n1 != 12){
                     Debug.LogError("消息长度出错");
                     continue;
                 }
@@ -182,35 +189,54 @@ namespace GAME{
                 }
                 string data = Encoding.UTF8.GetString(buf,0,n2);
                 Debug.LogWarning(data);
+
                 PlayerMsg move = JsonUtility.FromJson<PlayerMsg>(data);
-
-                //开始解析
-                long p_id = move.ID;
-                if(move.order == MOVEOrder.MOVE_X){
-                    CONFIG.xy_Value v = config.Get_xy_by_id(p_id);
-                    config.Set_xy(p_id, move.cmd, v.y);
-                    if(move.cmd != 0 )
-                        this._moveing_x = true;
-                    else
-                        this._moveing_x = false;
-
-                }else if(move.order == MOVEOrder.MOVE_Y){
-                    CONFIG.xy_Value v = config.Get_xy_by_id(p_id);
-                    config.Set_xy(p_id, v.x, move.cmd);
-                    if(move.cmd != 0 ) 
-                        this._moveing_y = true;
-                    else
-                        this._moveing_y = false;
-                }
+                FrameList.Enqueue(move);
             }    
-        }
+        }        
+        public void Operate(){ //进行移动操作
+            //1. 修正数值
+            t.text =" ";
+            if(FrameList.Count != 0){
+                My++;
+                PlayerMsg move = FrameList.Dequeue();
+                long p_id = move.ID;
+                if(move.order == MOVEOrder.SITE)
+                    config.xyz_Set(p_id,move.xz,move.y);
+                else {
+                    config.Set_xy(p_id, move.cmd, move.cmd2);
+                }   
+            }
 
-        public bool Get_moveing_x(){ //获取玩家X轴运动状态
-            return this._moveing_x;
-        }
-        public bool Get_moveing_y(){//获取玩家Y轴运动状态
-            return this._moveing_y;   
-        }
+            //2. 进行移动
+            foreach (long ID in config.name_Map.Keys)
+            {
+                GameObject player = GameObject.Find(config.Get_Name_by_id(ID));
+                if(player == null){
+                    Debug.LogError("this.GameObject错误");
+                    return ;
+                }
+                //获取移动数值
+                float _X = config.Get_xy_by_id(ID).x;
+                float _Y = config.Get_xy_by_id(ID).y; 
+                t.text += "\n" + "移动数值修改:  " + "_X: "+ _X + "  " + "_Y: "+_Y;
+
+                //旋转 
+                if(_X != 0){
+                    Quaternion targetAngels =  Quaternion.Euler(0, player.transform.localEulerAngles.y + _X * 90, 0);
+                    //player.transform.rotation = Quaternion.Slerp(player.transform.rotation, targetAngels, 2 * Time.deltaTime);
+                    player.transform.rotation = Quaternion.Slerp(player.transform.rotation, targetAngels, 2 );
+                }
+
+                //移动
+                Vector3 oldpos = player.transform.position;
+                Vector3 tarPos = oldpos + player.transform.forward *_Y;
+                player.transform.position  = Vector3.Lerp(oldpos, tarPos, 1);
+                t.text += "\n"+ID + ": " + player.transform.position.x+" , "+ player.transform.position.y+" , "+ player.transform.position.z ; 
+            }
+            t.text += "\n"+"当前是第 "+My+" 帧";
+            
+        }      
 
         public long GetPlayerId(){ //获取玩家id
             return this._playerid; //连接大厅之后才有效
@@ -227,21 +253,14 @@ namespace GAME{
             return this._gameing; 
         }
  
- 
-        public CONFIG.Config_Value GetGameinit(){  //获取游戏状态
+        public CONFIG.Config_Value GetGameinit(){  //获取初始化地图
             return this._gameinit; 
-        }
-
-        public string move(){   //*.
-                var buf = new byte[1024];
-                int n = this._socket.Receive(buf);
-                string date = Encoding.UTF8.GetString(buf,0,n);
-                return date;
         }
 
     }
 }
 
+//-----------------------------------------
 public class net_game : MonoBehaviour
 {
     static public GAME.SocketNetMgr net;
@@ -254,14 +273,12 @@ public class net_game : MonoBehaviour
             Debug.Log("进入大厅");
             //测试
             Game_Text();
-        
         } else{
             Debug.LogError("进入大厅失败");
         }
     }
     
     static public void Join(){
-       
         bool istrue1 = net.JoinRoom(); //加入房间
         if(istrue1){
             Debug.Log(net.GetPlayerId());//获取玩家id
@@ -272,17 +289,13 @@ public class net_game : MonoBehaviour
         }
     }
 
-    static public void Exit(){
+    static public void Exit(){//退出房间
         net.ExitRoom();
         Debug.Log("退出房间");
     }
 
-    static public void Move_X(float cmd){//发送运动指令并改变运动状态
-        net.PlayerMove_X(cmd);
-    }
-
-    static public void Move_Y(float cmd){//发送运动指令并改变运动状态
-        net.PlayerMove_Y(cmd);
+    static public void Move(float x, float y){//发送运动指令并改变运动状态
+        net.PlayerMove(x, y);
     }
     
     static public void Game_Text(){

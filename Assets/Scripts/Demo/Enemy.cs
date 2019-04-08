@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour{
     //坦克移动控制
-    public float Speed = 5;
-    public float AngulaSpeed = 15;
+    public float speed = 2;
+    public float angulaSpeed = 5;
     private Rigidbody body;
     public Transform gameManagerTransform;
 
@@ -24,11 +24,11 @@ public class Enemy : MonoBehaviour{
     public AudioClip shotClip;
     public AudioSource audioSourceFire;
 
-
     private float _X;
     private float _Y;
-    static private long _EnemyID;
 
+    int i = 0;
+    float time = 0;
 
     void Start()
     {
@@ -41,7 +41,7 @@ public class Enemy : MonoBehaviour{
     void InitOperation()
     {
         //炮弹起始位置
-        firePosition = transform.Find("FirePosition");
+        firePosition = transform.Find ("FirePosition");
         //初始坦克位置
         System.Random random = new System.Random();
     }
@@ -49,6 +49,7 @@ public class Enemy : MonoBehaviour{
     // Update is called once per frame
     void Update()
     {
+
         /* 
         if (Input.GetKeyDown(fireKey))
         {
@@ -65,26 +66,46 @@ public class Enemy : MonoBehaviour{
     }
 
     void FixedUpdate()
-    {
-        //移动
-        _X = config.Get_xy_by_id(_EnemyID).x;
-        _Y = config.Get_xy_by_id(_EnemyID).y;         
-        body.angularVelocity = transform.up * _X * AngulaSpeed;
-        body.velocity = transform.forward *_Y * Speed;
+    {       
+        if(net_game.net.GetRooming()){
+            GameObject player = this.gameObject;
+            if(player == null){
+                Debug.LogError("this.GameObject错误");
+                return ;
+            }
+            long ID = config.Get_id_by_Tag(player.name);
 
-        if (Mathf.Abs(_X) > 0.1 || Mathf.Abs(_Y) > 0.1)  //坦克行走时播放的声音
-        {
-            audioSource.clip = drivingAudio;
-            if (audioSource.isPlaying == false)
-                audioSource.Play();
-        }
-        else //坦克停止时播放的声音                                                  
-        {
-            audioSource.clip = idleAudio;
-            if (audioSource.isPlaying == false)
-                audioSource.Play();
-        }
-        
+            //移动数值
+            _X = config.Get_xy_by_id(ID).x;
+            _Y = config.Get_xy_by_id(ID).y;   
+
+            /* 
+            //旋转 
+            if(_X != 0){
+                Quaternion targetAngels =  Quaternion.Euler(0, player.transform.localEulerAngles.y + _X * 90, 0);
+                player.transform.rotation = Quaternion.Slerp(player.transform.rotation, targetAngels, speed * Time.deltaTime);
+            }
+
+            //移动
+            Vector3 oldpos = player.transform.position;
+            Vector3 tarPos = oldpos + transform.forward *_Y;
+            player.transform.position  = Vector3.Lerp(oldpos, tarPos,Time.deltaTime * angulaSpeed );
+            */
+            
+            if (Mathf.Abs(_X) > 0.1 || Mathf.Abs(_Y) > 0.1)  //坦克行走时播放的声音
+            {
+                audioSource.clip = drivingAudio;
+                if (audioSource.isPlaying == false)
+                    audioSource.Play();
+            }
+            else //坦克停止时播放的声音                                                  
+            {
+                audioSource.clip = idleAudio;
+                if (audioSource.isPlaying == false)
+                    audioSource.Play();
+            }     
+        }   
+
     }
 
     //Tank伤害计算
@@ -104,9 +125,5 @@ public class Enemy : MonoBehaviour{
             GameObject.Destroy(this.gameObject);
         }
         */
-    }
-
-    static public void SetID(long id){
-        _EnemyID = id;
     }
 }

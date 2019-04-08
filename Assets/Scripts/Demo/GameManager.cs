@@ -36,14 +36,14 @@ public class GameManager : MonoBehaviour
 
             for (long i=0; i<num; i++){
                 long id = config_value.ids[i];
+                config.Add(id);
+                config.xyz_Add(id);//统一位置
                 if(id == net_game.net.GetPlayerId()){
                     SpawnPlayer(id, config_value.values[i].x, config_value.values[i].y);
                 }else {
                     SpawnEnemy(id, config_value.values[i].x, config_value.values[i].y);
-                    Enemy.SetID(id);
                     Debug.Log("生成敌人"+id);
                 }
-                config.Add(id);
             }
             Debug.Log("游戏初始化完成");
 
@@ -59,6 +59,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    void FixedUpdate()
+    {
+        net_game.net.Operate();//获取帧同步操作
+    }
+
     /// <summary>
     /// tank生成
     /// </summary>
@@ -67,8 +72,13 @@ public class GameManager : MonoBehaviour
     {
         GameObject go = Instantiate(playerPrefab) as GameObject;
         go.transform.tag = "Player";
-        go.transform.name = "Tank" + TankNo;      
+        go.transform.name = TankNo.ToString();        
         Vector3 value = new Vector3(x,0,y);
+        config.ID_Add(go.transform.name);
+        config.Set_ID(go.transform.name, TankNo);
+        config.Name_Add(TankNo);
+        config.Set_Name(TankNo, go.transform.name);
+
         go.transform.position = value;
     }
 
@@ -76,12 +86,18 @@ public class GameManager : MonoBehaviour
     {
         GameObject go = Instantiate(enemyPrefabs[enemyNo]) as GameObject;
         go.transform.tag = "Enemy";
-        go.transform.name = "Tank" + TankNo;
+        go.transform.name = TankNo.ToString();
         Vector3 value = new Vector3(x,0,y);
+        config.ID_Add(go.transform.name);
+        config.Set_ID(go.transform.name, TankNo);
+
+        Quaternion q = new Quaternion(0,0,0,0);
+        config.xyz_Set(TankNo, value, q);
+
+        config.Name_Add(TankNo);
+        config.Set_Name(TankNo, go.transform.name);
+
         go.transform.position = value;
         enemyNo++;
     }
-
-
-
 }

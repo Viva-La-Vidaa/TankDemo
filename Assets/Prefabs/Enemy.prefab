@@ -204,6 +204,7 @@ GameObject:
   - component: {fileID: 777892837253631925}
   - component: {fileID: 1479040474930503972}
   - component: {fileID: 8043299904986806657}
+  - component: {fileID: 3929781609744913425}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Enemy
@@ -385,6 +386,18 @@ MonoBehaviour:
   shellSpeed: 15
   shotClip: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}
   audioSourceFire: {fileID: 1479040474930503972}
+--- !u!114 &3929781609744913425
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3292596683861920646}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6612403f55b02bc4eaf7d8d1f09e1347, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5227249174442086030
 GameObject:
   m_ObjectHideFlags: 0
