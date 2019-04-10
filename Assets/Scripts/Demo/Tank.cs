@@ -34,8 +34,8 @@ public class Tank : MonoBehaviour
     public AudioClip shotClip;
     public AudioSource audioSourceFire;
 
-    private float _X = 0;
-    private float _Y = 0;
+    private float _Q = 0;
+    private float _V = 0;
 
     int i = 0;
     float time = 0;
@@ -80,8 +80,8 @@ public class Tank : MonoBehaviour
             }
             long ID = config.Get_id_by_Tag(player.name);
             //移动数值
-            _X = config.Get_xy_by_id(ID).x;
-            _Y = config.Get_xy_by_id(ID).y;         
+            _Q = config.Get_xy_by_id(ID).x;
+            _V = config.Get_xy_by_id(ID).y;         
 
             /* 
             //旋转 
@@ -96,7 +96,7 @@ public class Tank : MonoBehaviour
             player.transform.position  = Vector3.Lerp(oldpos, tarPos,Time.deltaTime * angulaSpeed );
             */
 
-            if (Mathf.Abs(_X) > 0.1 || Mathf.Abs(_Y) > 0.1)  //坦克行走时播放的声音
+            if (Mathf.Abs(_Q) > 0.1 || Mathf.Abs(_V) > 0.1)  //坦克行走时播放的声音
             {
                 audioSource.clip = drivingAudio;
                 if (audioSource.isPlaying == false)

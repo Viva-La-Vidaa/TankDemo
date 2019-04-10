@@ -9618,6 +9618,7 @@ GameObject:
   - component: {fileID: 8866381068924129562}
   - component: {fileID: 7671175785411928073}
   - component: {fileID: 1555896491070653556}
+  - component: {fileID: 6003808897104805566}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -9655,7 +9656,7 @@ Rigidbody:
   m_Drag: 0
   m_AngularDrag: 0.05
   m_UseGravity: 1
-  m_IsKinematic: 0
+  m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 84
   m_CollisionDetection: 0
@@ -9799,6 +9800,18 @@ MonoBehaviour:
   shellSpeed: 15
   shotClip: {fileID: 8300000, guid: 672a9941361ad494a99fba36759eca80, type: 3}
   audioSourceFire: {fileID: 7671175785411928073}
+--- !u!114 &6003808897104805566
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6877409648859326199}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6612403f55b02bc4eaf7d8d1f09e1347, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8093844272652347571
 GameObject:
   m_ObjectHideFlags: 0

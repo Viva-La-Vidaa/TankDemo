@@ -25,10 +25,10 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(!net_game.net.GetGameing()){
-            Debug.Log("等待游戏开始" + i++);//替换为等待场景
+        if(!net_game.net.GetStart()){
+            Debug.Log("等待游戏初始化" + i++);//替换为等待场景
         }else if(!b){
-            Debug.Log("游戏开始");
+            Debug.Log("游戏开始初始化");
             enemyNo = 0;
             net_game.net.GameMsgInit();//初始化场景
             CONFIG.Config_Value config_value = net_game.net.GetGameinit();
@@ -46,6 +46,7 @@ public class GameManager : MonoBehaviour
                 }
             }
             Debug.Log("游戏初始化完成");
+            net_game.net.GameStart();
 
             Thread thread = new Thread(new ThreadStart(net_game.net.SetMoveValueByNet));//接受移动参数数据
             thread.Start();
@@ -55,13 +56,16 @@ public class GameManager : MonoBehaviour
         
         if (Input.GetKeyDown(KeyCode.P))
         {
-            SpawnEnemy(1, -15, 20);//这里假设服务端发送过来的是2号
+            SpawnEnemy(1, -15, 20);
         }
     }
 
     void FixedUpdate()
     {
-        net_game.net.Operate();//获取帧同步操作
+        if(net_game.net.GetGameing()){
+            net_game.net.Operate();//获取帧同步操作
+        }
+
     }
 
     /// <summary>

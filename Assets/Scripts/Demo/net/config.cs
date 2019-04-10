@@ -5,6 +5,7 @@ using System;
 
 namespace  CONFIG{
     [Serializable]
+
     public struct xy_Value{//xy参数
         public float x;
         public float y;
@@ -14,6 +15,7 @@ namespace  CONFIG{
             this.y = y;
         }
     }
+
 
     [Serializable]
      public struct Config_Value{
@@ -37,7 +39,6 @@ public class config{
     public static Dictionary<long, CONFIG.xy_Value> TankMap = new Dictionary<long, CONFIG.xy_Value>();    //存放玩家移动数据
     public static Dictionary<long, CONFIG.XZ_Y> XZ_Y_Map = new Dictionary<long, CONFIG.XZ_Y>();    //存放玩家位置数据
     public static Dictionary<String, long> id_Map = new Dictionary<String, long>();    //存放玩家ID
-
     public static Dictionary<long, String> name_Map = new Dictionary<long, String>();    //存放玩家名字
 
 
@@ -45,7 +46,7 @@ public class config{
         CONFIG.xy_Value xy =  new CONFIG.xy_Value();
         TankMap.Add(id, xy);
     }
-    public static void Set_xy(long id, float x, float y){  //2. 根据id设置xy值
+    public static void Set_xy(long id, int x, int y){  //2. 根据id设置xy值
         if(TankMap.ContainsKey(id)){
             TankMap[id] = new CONFIG.xy_Value(x, y);
         }else{
