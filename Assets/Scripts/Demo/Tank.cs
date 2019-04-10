@@ -9,12 +9,14 @@ public class Tank : MonoBehaviour
 {
     public int expValue = 0; //游戏中的经验值
     public int levelValue = 1; //默认一级
-    public string nickName;//游戏呢称
+    private int preLevel = 1; //上一个等级
+    public string userName = "NULL";//游戏呢称
+    public int hpValue = 100;//坦克默认的血量
 
     //坦克移动控制
     public float speed = 2;
     public float angulaSpeed = 5;
-    public float playerNum = 1;    //玩家编号,用于区分不同的控制
+    // float playerNum = 1;    //玩家编号,用于区分不同的控制
     private Rigidbody body;
     public Transform gameManagerTransform;
 
@@ -22,7 +24,6 @@ public class Tank : MonoBehaviour
     public AudioClip drivingAudio;
     private AudioSource audioSource;//坦克移动声音
 
-    public int Hp = 100;//坦克默认的血量
     public GameObject tankExplosion;
     public AudioClip tankExplosionAudio;
     public Slider hpSlider;//血条
@@ -44,6 +45,8 @@ public class Tank : MonoBehaviour
     {
         body = this.GetComponent<Rigidbody>();
         audioSource = this.GetComponent<AudioSource>();
+        gameManagerTransform = GameObject.Find("GameManager").transform;
+        hpSlider = GameObject.Find("HpSlider").GetComponent<Slider>();
         InitOperation();
     }
 
@@ -52,27 +55,30 @@ public class Tank : MonoBehaviour
     {
         //炮弹起始位置
         firePosition = transform.Find("FirePosition");
+        //UIManager.Instance.ShowPlayerUI(userName,levelValue,hpValue,expValue);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(fireKey))
+        if (Input.GetKeyDown(fireKey)&& this.transform.tag == "Player")
         {
-            //AudioSource.PlayClipAtPoint(shotClip, transform.position, 1.0f);//开火的声音
-            audioSourceFire.clip = shotClip;
-            if (audioSource.isPlaying == false)
-                audioSource.Play();
-            GameObject go = GameObject.Instantiate(shellPrefab, firePosition.position, firePosition.rotation) as GameObject;
-            //设置炮弹的父物体
-            go.transform.parent = gameManagerTransform;
-            go.GetComponent<Rigidbody>().velocity = go.transform.forward * shellSpeed;//炮弹速度
+            AttackTank();
+        }
+
+        if (expValue >= 100)
+        {
+            Upgrade();
+        }
+        if (levelValue > preLevel)
+        {
+            ChangeScale(levelValue);
         }
     }
 
     void FixedUpdate()
     {
-        if(net_game.net.GetRooming()){
+        if(net_game.net.GetRooming()&&this.transform.tag=="Player"){
             GameObject player = this.gameObject;
             if(player == null){
                 Debug.LogError("this.GameObject错误");
@@ -111,21 +117,59 @@ public class Tank : MonoBehaviour
         }
     }
 
-    //Tank伤害计算
+    //攻击
+    void AttackTank()
+    {
+        //AudioSource.PlayClipAtPoint(shotClip, transform.position, 1.0f);//开火的声音
+        audioSourceFire.clip = shotClip;
+        if (audioSource.isPlaying == false)
+            audioSource.Play();
+        GameObject go = GameObject.Instantiate(shellPrefab, firePosition.position, firePosition.rotation) as GameObject;
+        //设置炮弹的父物体
+        go.transform.parent = gameManagerTransform;
+        go.GetComponent<Rigidbody>().velocity = go.transform.forward * shellSpeed;//炮弹速度
+    }
+
+    //Tank_player受伤害计算
     void TakeDamage()
     {
         //如果血量已小于0,直接结束
-        if (Hp <= 0)
+        if (hpValue <= 0)
             return;
         //如果血量大于0,血量减少,伤害在10-20之间
-        Hp -= Random.Range(10, 20);
-        hpSlider.value = Hp / 100;
+        hpValue -= Random.Range(10, 20);
         //收到伤害之后 血量为0 控制死亡效果
-        if (Hp <= 0)
+        if (hpValue <= 0)
         {
             AudioSource.PlayClipAtPoint(tankExplosionAudio, transform.position);
             GameObject.Instantiate(tankExplosion, transform.position + Vector3.up, transform.rotation);//实例化tankExplosion
             GameObject.Destroy(this.gameObject);
         }
+    }
+
+    //升级
+    void Upgrade()
+    {
+        preLevel = levelValue;
+        levelValue += expValue / 100;
+        expValue = expValue % 100;
+        if (levelValue > preLevel)
+        {
+            //避免血量溢出
+            hpValue = (hpValue + 50) >= (100 + 50 * (levelValue - 1)) ? (100 + 50 * (levelValue - 1)) : (hpValue + 50);
+            StartCoroutine(ChangeScale(levelValue)); //TODO:调试
+        }
+        //player升级后，更新等级和经验值UI
+        UIManager.Instance.ShowPlayerUI(userName, levelValue, hpValue, expValue);
+    }
+
+    //放大模型
+    IEnumerator ChangeScale(int level)
+    {
+        float scaleValue = 0.5f * (level + 1);
+        float smooth = 10f;
+        Vector3 vector3 = new Vector3(scaleValue, scaleValue, scaleValue);
+        transform.localScale = Vector3.Lerp(transform.localScale, vector3, smooth * Time.deltaTime);
+        yield return new WaitForSeconds(0.5f);
     }
 }
