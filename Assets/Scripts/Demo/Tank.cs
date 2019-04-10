@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class Tank : MonoBehaviour
 {
-    public int expValue = 0; //游戏中的经验值
+    public int expValue = 50; //游戏中的经验值
     public int levelValue = 1; //默认一级
     private int preLevel = 1; //上一个等级
     public string userName = "NULL";//游戏呢称
@@ -61,18 +61,16 @@ public class Tank : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //开火
         if (Input.GetKeyDown(fireKey)&& this.transform.tag == "Player")
         {
             AttackTank();
         }
 
-        if (expValue >= 100)
+        //升级
+        if (!isLevel)
         {
             Upgrade();
-        }
-        if (levelValue > preLevel)
-        {
-            ChangeScale(levelValue);
         }
     }
 
@@ -150,26 +148,39 @@ public class Tank : MonoBehaviour
     //升级
     void Upgrade()
     {
-        preLevel = levelValue;
-        levelValue += expValue / 100;
-        expValue = expValue % 100;
-        if (levelValue > preLevel)
+        if (expValue >= 100)
         {
-            //避免血量溢出
-            hpValue = (hpValue + 50) >= (100 + 50 * (levelValue - 1)) ? (100 + 50 * (levelValue - 1)) : (hpValue + 50);
-            StartCoroutine(ChangeScale(levelValue)); //TODO:调试
+            isLevel = false;//重置
+            levelValue += expValue / 100;
+            expValue = expValue % 100;
+            if (levelValue > preLevel)
+            {
+                //避免血量溢出
+                hpValue = (hpValue + 50) >= (100 + 50 * (levelValue - 1)) ? (100 + 50 * (levelValue - 1)) : (hpValue + 50);
+                UIManager.Instance.ShowPlayerUI(userName, levelValue, hpValue, expValue);
+                preLevel = levelValue;
+            }
         }
         //player升级后，更新等级和经验值UI
-        UIManager.Instance.ShowPlayerUI(userName, levelValue, hpValue, expValue);
+        ChangeScale(levelValue); //TODO:调试 
     }
 
+    public bool isLevel = false;
+
     //放大模型
-    IEnumerator ChangeScale(int level)
+    void  ChangeScale(int level)
     {
+        //yield return new WaitForSeconds(5f);
         float scaleValue = 0.5f * (level + 1);
         float smooth = 10f;
-        Vector3 vector3 = new Vector3(scaleValue, scaleValue, scaleValue);
-        transform.localScale = Vector3.Lerp(transform.localScale, vector3, smooth * Time.deltaTime);
-        yield return new WaitForSeconds(0.5f);
+        Vector3 tempVector3 = new Vector3(scaleValue, scaleValue, scaleValue);
+        if (transform.rotation.x - tempVector3.x <= 0.00001f)
+            transform.localScale = Vector3.Lerp(transform.localScale, tempVector3, smooth * Time.deltaTime);
+        else
+        {
+            isLevel = true;//升级完成
+            Debug.Log("执行了一次！！！");
+        }
+
     }
 }
