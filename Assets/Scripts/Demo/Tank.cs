@@ -64,8 +64,10 @@ public class Tank : MonoBehaviour
         if (Input.GetKeyDown(fireKey)&& this.transform.tag == "Player")
         {
             AttackTank();
+            net_game.SendFireInfo(firePosition);//发送开火数据
         }
 
+ 
         if (expValue >= 100)
         {
             Upgrade();
@@ -124,11 +126,17 @@ public class Tank : MonoBehaviour
         audioSourceFire.clip = shotClip;
         if (audioSource.isPlaying == false)
             audioSource.Play();
-        GameObject go = GameObject.Instantiate(shellPrefab, firePosition.position, firePosition.rotation) as GameObject;
+
+
+       // Instantiate(shellPrefab, firePosition.position, firePosition.rotation);
+   
+     GameObject go = GameObject.Instantiate(shellPrefab, firePosition.position, firePosition.rotation) as GameObject;
         //设置炮弹的父物体
         go.transform.parent = gameManagerTransform;
-        go.GetComponent<Rigidbody>().velocity = go.transform.forward * shellSpeed;//炮弹速度
+       // go.GetComponent<Rigidbody>().velocity = go.transform.forward * shellSpeed;//炮弹速度
+     
     }
+
 
     //Tank_player受伤害计算
     void TakeDamage()
@@ -162,6 +170,7 @@ public class Tank : MonoBehaviour
         //player升级后，更新等级和经验值UI
         UIManager.Instance.ShowPlayerUI(userName, levelValue, hpValue, expValue);
     }
+
 
     //放大模型
     IEnumerator ChangeScale(int level)

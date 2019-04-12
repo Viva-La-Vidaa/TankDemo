@@ -8,9 +8,24 @@ public class Shell : MonoBehaviour
     public AudioClip shellExplosionAudio;
     private Transform gameManagerTransform; //游戏管理器
 
+    public float shellSpeed = 15f;
+    public float maxLifeTime = 2f;
+    public float instantiateTime =0f;
+
     private void Start()
     {
         gameManagerTransform = GameObject.Find("GameManager").transform;
+        instantiateTime = Time.time;
+    }
+
+    private void Update()//炮弹一直向前运动,直到过了生存时间,自动销毁
+    {
+        //炮弹前进
+        transform.position += transform.forward * shellSpeed * Time.deltaTime;
+
+        //摧毁
+        if (Time.time - instantiateTime > maxLifeTime)
+            Destroy(gameObject);
     }
 
     public void OnTriggerEnter(Collider collider)//触发检测

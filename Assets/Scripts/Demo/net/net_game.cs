@@ -25,13 +25,15 @@ namespace GAME{
         public bool joinroom;//表示是否成功加入房间
         public long roomid;//加入的房间id
     }
-    public enum MOVEOrder{MOVE_X,MOVE_Y,SITE}
+    public enum MOVEOrder{MOVE_X,MOVE_Y,SITE,Fire}
     public struct PlayerMsg {//玩家操作消息
         public long ID;
         public MOVEOrder order;
         public int q;//数值
         public int v;//数值
 
+        public Vector3 postion;//炮弹位置信息
+        public Quaternion rotation;//炮弹旋转信息
         public int num;
 
         public Vector3 V;
@@ -58,7 +60,6 @@ namespace GAME{
         private bool _rooming;
         private bool _gameing;
         private bool _startinit;
-
 
         private CONFIG.Config_Value _gameinit; //游戏初始化位置配置
 
@@ -178,12 +179,16 @@ namespace GAME{
             playermsg.num = num;
             playermsg.V = Vector3.zero;
             playermsg.Q = new Quaternion();
+
+            //炮弹信息处理
+            playermsg.postion = Vector3.zero;
+            playermsg.rotation = new Quaternion();
             byte[] body = Encoding.UTF8.GetBytes(JsonUtility.ToJson(playermsg));
             byte[] data = pack(body.Length, body);
             this._socket.Send(data);
         }
         
-        public void SetMoveValueByNet(){ //9 从服务器器获取运动状态并设置
+        public void SetMoveValueByNet(){ //9 从服务器器获取运动和开火状态并设置
             while(this._gameing){//正在游戏中
                 //读包头
                 var buf = new byte[1024];
@@ -204,8 +209,14 @@ namespace GAME{
                 string data = Encoding.UTF8.GetString(buf,0,n2);
                 //Debug.LogWarning(data);
 
-                PlayerMsg move = JsonUtility.FromJson<PlayerMsg>(data);
-                FrameList.Enqueue(move);
+               PlayerMsg move = JsonUtility.FromJson<PlayerMsg>(data);
+               if(move.order == MOVEOrder.MOVE_X|| move.order == MOVEOrder.MOVE_Y)//如果是移动指令
+                FrameList.Enqueue(move);       
+                else if(move.order == MOVEOrder.Fire)//如果是开火指令
+                {
+                      //开火同步函数..没写..
+                }
+               
             }    
         }        
 
@@ -238,6 +249,7 @@ namespace GAME{
                         if(_Q == 0 && _V == 0)
                             continue;
 
+        
                         Quaternion old_Q = player.transform.rotation;
                         Vector3 oldpos = player.transform.position;
 
@@ -275,7 +287,7 @@ namespace GAME{
                         Debug.LogError("信息2: "+ "服务器改变状态帧数：" + Move.F + " 客户端改变状态帧数: " + Cline_id + "服务器上次：" + Move.o  + " 客户端上次: " + flag);
                         Debug.LogError("信息3: "+ "服务器状态维持帧数：" + move.num + " 客户端状态维持帧数: " + X);
                         Debug.LogError(" old_V: " + oldpos.x +" "+ oldpos.y+" "+ oldpos.z);
-                        Debug.LogError(" new_V: " + player.transform.position.x +" "+ player.transform.position.y+" "+ player.transform.position.z);
+
                         Debug.LogError(" old_Q: " + old_Q.x +" "+ old_Q.y+" "+ old_Q.z+" "+ old_Q.w);
                         Debug.LogError(" new_Q: " + player.transform.rotation.x +" "+ player.transform.rotation.y+" "+ player.transform.rotation.z+" "+ player.transform.rotation.w);
  
@@ -328,7 +340,24 @@ namespace GAME{
                 My++;
             }
 
-        }      
+        }
+
+        public void PlayerFire(Transform FireInfo)//11. 开火
+        {
+            PlayerMsg playermsg;
+            playermsg.ID = _playerid;
+            playermsg.order = MOVEOrder.Fire;
+            playermsg.q = 0;
+            playermsg.v =0;
+            playermsg.num =0;
+            playermsg.V = Vector3.zero;
+            playermsg.Q = new Quaternion();
+            playermsg.postion = FireInfo.position;
+            playermsg.rotation = FireInfo.rotation;
+            byte[] body = Encoding.UTF8.GetBytes(JsonUtility.ToJson(playermsg));
+            byte[] data = pack(body.Length, body);
+            this._socket.Send(data);
+        }
 
         public long GetPlayerId(){ //获取玩家id
             return this._playerid; //连接大厅之后才有效
@@ -393,7 +422,12 @@ public class net_game : MonoBehaviour
     static public void Move(float q, float v, int num){//发送运动指令并改变运动状态
         net.PlayerMove(q, v, num);
     }
-    
+
+    static public void SendFireInfo(Transform FireInfo)
+    {//发送开火指令并改变开火状态
+        net.PlayerFire(FireInfo);
+    }
+
     static public void Game_Text(){
         Join();//方便加入房间，后续要改动
         if(net.GetRooming()){

@@ -69,6 +69,7 @@ public class GameManager : MonoBehaviour
             net_game.net.Operate();//获取帧同步操作
         }
 
+
     }
 
     /// <summary>
